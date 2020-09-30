@@ -2,13 +2,15 @@
 // Unity Editor extension that allows batch renaming for GameObjects in Hierarchy
 // Via Alan Thorn (TW: @thorn_alan)
 // Roman Luks - added sorting by sibling index
+// Richard Trimbos - added context menu to GameObject
 
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BatchRename : ScriptableWizard {
+public class BatchRename : ScriptableWizard
+{
 
 	/// <summary>
 	/// Base name
@@ -26,28 +28,39 @@ public class BatchRename : ScriptableWizard {
 	public int Increment = 1;
 
 	[MenuItem("Edit/Batch Rename...")]
-	static void CreateWizard() {
+	static void CreateWizard()
+	{
+		ScriptableWizard.DisplayWizard("Batch Rename", typeof(BatchRename), "Rename");
+	}
+
+	[MenuItem("GameObject/Batch Rename/Rename...", false, 10)]
+	static void BatchRenameButton(MenuCommand menuCommand)
+	{
+		// Create a custom game object
 		ScriptableWizard.DisplayWizard("Batch Rename", typeof(BatchRename), "Rename");
 	}
 
 	/// <summary>
 	/// Called when the window first appears
 	/// </summary>
-	void OnEnable() {
+	void OnEnable()
+	{
 		UpdateSelectionHelper();
 	}
 
 	/// <summary>
 	/// Function called when selection changes in scene
 	/// </summary>
-	void OnSelectionChange() {
+	void OnSelectionChange()
+	{
 		UpdateSelectionHelper();
 	}
 
 	/// <summary>
 	/// Update selection counter
 	/// </summary>
-	void UpdateSelectionHelper() {
+	void UpdateSelectionHelper()
+	{
 
 		helpString = "";
 
@@ -59,7 +72,8 @@ public class BatchRename : ScriptableWizard {
 	/// <summary>
 	/// Rename
 	/// </summary>
-	void OnWizardCreate() {
+	void OnWizardCreate()
+	{
 
 		// If selection is empty, then exit
 		if (Selection.objects == null)
@@ -68,12 +82,13 @@ public class BatchRename : ScriptableWizard {
 		// Current Increment
 		int PostFix = StartNumber;
 
-        List<GameObject> mySelection = new List<GameObject>(Selection.gameObjects);
-        mySelection.Sort((go1, go2) => go1.transform.GetSiblingIndex().CompareTo(go2.transform.GetSiblingIndex()));
+		List<GameObject> mySelection = new List<GameObject>(Selection.gameObjects);
+		mySelection.Sort((go1, go2) => go1.transform.GetSiblingIndex().CompareTo(go2.transform.GetSiblingIndex()));
 
-        foreach (var O in mySelection) {
-            O.name = BaseName + PostFix;
-            PostFix += Increment;
-        }
-    }
+		foreach (var O in mySelection)
+		{
+			O.name = BaseName + PostFix;
+			PostFix += Increment;
+		}
+	}
 }
